@@ -44,9 +44,6 @@ class Student {
       else {console.log(err);}
     })
   }
-  coba() {
-    console.log(`----------------`);
-  }
   viewStudents() {
     let query = `SELECT * FROM students`
     db.all(query, (err,students) => {

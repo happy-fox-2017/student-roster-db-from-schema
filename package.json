@@ -1,0 +1,24 @@
+{
+  "name": "student-roster-db-from-schema",
+  "version": "1.0.0",
+  "description": "",
+  "main": "setup.js",
+  "dependencies": {
+    "sqlite3": "^3.1.8",
+    "strftime": "^0.10.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/happy-fox-2017/student-roster-db-from-schema.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/happy-fox-2017/student-roster-db-from-schema/issues"
+  },
+  "homepage": "https://github.com/happy-fox-2017/student-roster-db-from-schema#readme"
+}

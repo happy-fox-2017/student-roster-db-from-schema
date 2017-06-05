@@ -12,6 +12,17 @@ class Student {
     
   }
   
+  static showInfo(students) {
+    students.forEach(student => {
+      console.log(`id : ${student.id}`);
+      console.log(`first Name : ${student.first_name}`);
+      console.log(`last Name : ${student.last_name}`);
+      console.log(`gender : ${student.gender}`);
+      console.log(`birthdate : ${student.birthdate}`);
+      console.log(`email : ${student.email}`);
+      console.log(`phone : ${student.phone}\n`);
+    })
+  }
   addStudent(first_name,last_name,gender,birthdate,email,phone) {
     let query = `insert into students (first_name,last_name,gender,birthdate,email,phone) VALUES ('${first_name}','${last_name}','${gender}','${birthdate}','${email}','${phone}');`
     db.run(query, err => {
@@ -33,16 +44,22 @@ class Student {
       else {console.log(err);}
     })
   }
+  coba() {
+    console.log(`----------------`);
+  }
   viewStudents() {
     let query = `SELECT * FROM students`
     db.all(query, (err,students) => {
-      this.showInfo(students)
+      if (!err) {
+        Student.showInfo(students)
+      } else {console.log(err);}
+      // console.log(students);
     })
   }
   viewStudentByName(name) {
     let query = `SELECT * from students where first_name=?`
     db.get(query, [`${name}`], (err, students) => {
-      this.showInfo(students);
+      Student.showInfo(students);
     })
   }
   viewStudentByAttribute(attribute,value) {
@@ -54,37 +71,46 @@ class Student {
     }
     db.all(query, (err, students) => {
       if (!err) {
-        this.showInfo(students)
+        Student.showInfo(students)
       } else {console.log(err);}
     })
   }
   showBirthdayThisMonth() {
     let query = `select *,strftime('%m',birthdate) as birth_month,strftime('%m','now') as now from students where birth_month=now;`
     db.all(query, (err,students) => {
-        this.showInfo(students)
+        Student.showInfo(students)
     })
   }
-  showStudentsBirthDay() {
+  showStudentsBirthday() {
     let query = `select *,strftime('%m-%d',birthdate) as new_birthday from students order by new_birthday;`
     db.all(query, (err, students) => {
-      this.showInfo(students)
+      Student.showInfo(students)
     })
   }
-  help() {}
-  showInfo(students) {
-    students.forEach(student => {
-      console.log(`id : ${student.id}`);
-      console.log(`first Name : ${student.first_name}`);
-      console.log(`last Name : ${student.last_name}`);
-      console.log(`gender : ${student.gender}`);
-      console.log(`birthdate : ${student.birthdate}`);
-      console.log(`email : ${student.email}`);
-      console.log(`phone : ${student.phone}\n`);
-    })
+  help() {
+    console.log(`add('first_name','last_name','gender','birthdate','email','phone') >> add user`);
+    console.log(`update(id, attribute, value) >> update by id`);
+    console.log(`remove(id) >> remove student by id`);
+    console.log(`viewAll() >> view all students`);
+    console.log(`viewStudent(name) >> view student by name`);
+    console.log(`viewStudentAdvance(attribute,value) >> view student by attribute`);
+    console.log(`birthdayNow() >> view students's birthday this month`);
+    console.log(`showBirthday() >> show all students birth day based on month`);
+    console.log(`help() >> show help`);
   }
 }
 
 let student = new Student()
-// student.viewStudents()
-// console.log(student);
+
 replServer.context.student = student
+replServer.context.add = student.addStudent
+replServer.context.update = student.updateStudentById
+replServer.context.remove = student.removeStudentById
+replServer.context.viewAll = student.viewStudents
+replServer.context.viewStudent = student.viewStudentByName
+replServer.context.viewStudentAdvance = student.viewStudentByAttribute
+replServer.context.birthdayNow = student.showBirthdayThisMonth
+replServer.context.showBirthday = student.showStudentsBirthday
+replServer.context.help = student.help
+
+

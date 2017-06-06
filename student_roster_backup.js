@@ -9,11 +9,11 @@ var r = repl.start('> ');
 // write your code here
 
 //cli-Table2
-let Table = require ('cli-table2');
-let tableStudent = new Table({
-  head: ['ID', 'First Name', 'Last Name', 'Gender', 'Birthday', 'Email', 'Phone']
-});
-
+// let table = require ('cli-table2');
+// let tableStudent = new Table({
+//   head: ['ID', 'First Name', 'Last Name', 'Gender', 'Birthday', 'Email', 'Phone']
+// });
+// 
 // let tableSearch = new Table({
 //   head: ['First Name', 'Last Name']
 // });
@@ -48,7 +48,6 @@ class Student {
         }
       });
     });
-    return 'success!';
   }
 
   removeStudent(id) {
@@ -71,16 +70,12 @@ class Student {
     db.serialize(function() {
       db.all(query, function(err, data) {
         if (!err) {
-          data.forEach((attrb) =>
-            tableStudent.push([attrb.id, attrb.first_name, attrb.last_name, attrb.gender, attrb.birthday, attrb.email, attrb.phone]));
-          console.log('\n');
-          console.log(tableStudent.toString());
+          console.log(data);
         } else {
           console.log(err);
         }
       });
     });
-    return 'Here is your student list';
   }
 
   showStudent(name) {
@@ -154,26 +149,10 @@ class Student {
       });
     });
   }
-  
-  help() {
-    console.log('=========================================== GUIDE ===========================================');
-    console.log('=========================================== Do not forget semicolon; ========================');
-    console.log("1. TO ADD STUDENT DATA, PLEASE TYPE:\n  >>addStudent('first_name', 'last_name', 'gender', 'birthday', 'email', 'phone')<<");
-    console.log("2. TO UPDATE EXISTING STUDENT DATA, PLEASE TYPE:\n  >>updateStudent('id', 'first_name', 'last_name', 'gender', 'birthday', 'email', 'phone')<<");
-    console.log("3. TO REMOVE STUDENT DATA, PLEASE TYPE:\n  >>removeStudent('ID')<<");
-    console.log("4. TO SHOW ALL STUDENT DATA, SIMPLY TYPE:\n  >>studentList()<<");
-    console.log("5. TO SHOW STUDENT DATA WITH SPECIFIC NAME, PLEASE TYPE:\n  >>showStudent('student_name')<<");
-    console.log("6. TO SHOW STUDENT WITH SPECIFIC ATTRIBUTE AND VALUE, PLEASE TYPE:\n  >>findStudent(attribute, 'value')<<");
-    console.log("7. TO KNOW WHO IS THE BIRTHDAY BOY/GIRL, SIMPLY TYPE:\n  >>birthdayBoy()<<");
-    console.log("8. TO KNOW WHEN THE STUDENT GET BIRTHDAY, PLEASE TYPE:\n  >>birthdays()<<");
-    console.log("========== Please type help() everytime you encounter a problem ==========");
-  }
-
 } //class Student
 
 let student = new Student();
 
-r.context.help = student.help();
 r.context.addStudent = student.addStudent
 r.context.updateStudent = student.updateStudent
 r.context.removeStudent = student.removeStudent
@@ -183,5 +162,11 @@ r.context.findStudent = student.findStudent
 r.context.birthdayBoy = student.birthdayBoy
 r.context.birthdays = student.birthdays
 
+function help() {
+  console.log('================= GUIDE =================');
+  console.log('==== Do not forget semicolon; ===========');
+  console.log("1. To add student data, please type:\n>>addStudent('first_name', 'last_name', 'gender', 'birthday', 'email', 'phone');<<");
+  console.log("2. To update existing student data, please type:\n>>updateStudent('id', 'first_name', 'last_name', 'gender', 'birthday', 'email', 'phone');<<");
+}
 
-// r.context.help = help
+r.context.help = help

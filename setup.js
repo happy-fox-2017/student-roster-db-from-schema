@@ -21,30 +21,35 @@ const SEED_DATA = `
     ('Riza', 'Fahmi', '1983-12-3')
 `;
 
-const createTable = () => {
-  db.serialize(() => {
-    db.run(CREATE_TABLE, (err) => {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log('Table created.');
-      }
-    });
+const createTable = (callback) => {
+  db.run(CREATE_TABLE, (err) => {
+    if (err) {
+      console.log(err);
+      if (callback) callback(err);
+    } else {
+      console.log('Table created.');
+      if (callback) callback();
+    }
   });
 };
 
-const seedData = () => {
-  db.serialize(() => {
-    db.run(SEED_DATA, (err) => {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log('Data created.');
-      }
-    });
+const seedData = (callback) => {
+  db.run(SEED_DATA, (err) => {
+    if (err) {
+      console.log(err);
+      if (callback) callback(err);
+    } else {
+      console.log('Data loaded.');
+      if (callback) callback();
+    }
   });
 };
 
-const replStart = repl.start('> ');
-replStart.context.createTable = createTable;
-replStart.context.seedData = seedData;
+const initializeContext = (context) => {
+  context.createTable = createTable;
+  context.seedData = seedData;
+};
+
+const r = repl.start({ prompt: '> ' });
+initializeContext(r.context);
+

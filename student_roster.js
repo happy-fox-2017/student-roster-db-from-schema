@@ -1,54 +1,44 @@
 "use strict"
 
-//and
-
 const repl = require('repl');
 const sqlite3 = require('sqlite3').verbose();
 
-let file = 'student1.db'
+let file = 'student.db'
 let db = new sqlite3.Database(file);
 
 let replServer = repl.start({
-  prompt: '> ',
+  prompt: 'play> ',
   input: process.stdin,
   output: process.stdout
 });
-// write your code here
-
-// dah mpe sini.. 
 
 class Student {
   constructor() {
   }
-  
-  // OK, jadi dia panggil node student1.js langsung keluar jg database kt => student1.db ( baru )
 
   help() {
-    console.log('Type <insertData> to insert a student\'s data');
-    console.log('Type <updateData> to update a student\'s data');
-    console.log('Type <deleteData> to delete a student\'s data');
-    console.log('Type <listData> to list all student\'s data');
-    console.log('Type <listName> to list a student\'s data by name');
-    console.log('Type <listBy> to list a student\'s data by whatever you like');
-    console.log('Type <listMonth> to list student(s) which having birthday this month');
-    console.log('Type <listSorted> to sort students data by birthdate');
+    console.log(' |addData| : add student');
+    console.log(' |updateData| : update students');
+    console.log(' |removeData| : delete students');
+    console.log(' |studentsList| : list all students');
+    console.log(' |nameList| : list students by name');
+    console.log(' |keyValueList| : list students by parameter');
+    console.log(' |listByMonth| : list students having birthday this month');
+    console.log(' |sortedByBirthday| : sort students by birthday');
   }
   
-  // jadi disini kudu sudah ada table e dulu ( nek ga,, ga isa jalan euy... )
-  
-
-  insertData(first_name, last_name, gender, birthday, email, phone) {
+  addData(first_name, last_name, gender, birthday, email, phone) {
     db.serialize(function() {
       let query = `INSERT INTO student (first_name, last_name, gender, birthday, email, phone) VALUES ('${first_name}', '${last_name}', '${gender}', '${birthday}', '${email}', '${phone}')`;
       db.run(query, (err) => {
         if (err) {
           console.log(err);
         } else {
-          console.log(`${first_name} has been listed`);
+          console.log(`${first_name} listed`);
         }
       });
     });
-    return 'woww'
+    return 'add student'
   }
 
   updateData(id, first_name, last_name, gender, birthday, email, phone) {
@@ -58,31 +48,28 @@ class Student {
         if (err) {
           console.log(err);
         } else {
-          console.log("Student\'s data updated");
+          console.log(`Student's updated`);
         }
       });
     });
-    return 'yeahh'
+    return 'update students'
   }
   
-  // klo mo update kudu diisi lagi semua param e?? or bisa langsung di kosongin aja, dll? 
-  // yes to all.. semua masukin.. 
-  
-
-  deleteData(id) {
+  removeData(id) {
     db.serialize(function() {
       let query = `DELETE FROM student WHERE id = ${id}`
       db.run(query, (err) => {
         if (err) {
           console.log(err);
         } else {
-          console.log('Student has been deleted');
+          console.log(`Student's deleted`);
         }
       });
     });
+    return 'delete students'
   }
 
-  listData() {
+  studentsList() {
     db.serialize(function() {
       let query = "SELECT * FROM student"
       db.all(query, (err,rows) => {
@@ -93,10 +80,10 @@ class Student {
         }
       })
     })
-    return 'all data from list'
+    return 'All Data from list:'
   }
 
-  listName(name) {
+  nameList(name) {
     db.serialize(function() {
       let query = `SELECT * FROM student WHERE first_name like '%${name}%' OR last_name like '%${name}%'`
       db.all(query, (err,rows) => {
@@ -107,10 +94,10 @@ class Student {
         }
       })
     })
-    return `That's all`
+    return `List Student:`
   }
 
-  listBy(option, value) {
+  keyValueList(option, value) {
     db.serialize(function() {
       let query = `SELECT * FROM student WHERE UPPER(${option}) = UPPER("${value}")`
       db.all(query, (err,rows) => {
@@ -121,15 +108,10 @@ class Student {
         }
       })
     })
-    return 'sort by option n value'
+    return 'sort by key value:'
   }
-  // ini yang attribute trus value ne apa... 
-  // ok 
   
-  
-  // INI yang belum jalan !!! 
-// di list berdasar bulan e.. 
-  listMonth() {
+listByMonth() {
     db.serialize(function() {
       let query = `SELECT * FROM student WHERE strftime('%m', birthday) = strftime('%m', date('now'))`
       db.all(query, (err,rows) => {
@@ -140,14 +122,10 @@ class Student {
         }
       })
     })
-    return 'data dapat di list'
+    return 'List student by month:'
   }
-  // belum bisa sortir data berdasar bulan
-  
-  
-  
 
-  listSorted() {
+  sortedByBirthday() {
     db.serialize(function() {
       let query = `SELECT * FROM student ORDER BY strftime('%m%d', birthday) ASC`
       db.all(query, (err,rows) => {
@@ -159,22 +137,18 @@ class Student {
       })
       
     })
-    return 'dah di listsorted'
+    return 'Sorted by Birthday:'
   }
-  // ini disorted berdasar hari ulang tahun
-  
-  
-  
   
 }
 
-let studentData = new Student()
-replServer.context.help = studentData.help;
-replServer.context.insertData = studentData.insertData;
-replServer.context.updateData = studentData.updateData;
-replServer.context.deleteData = studentData.deleteData;
-replServer.context.listData = studentData.listData;
-replServer.context.listName = studentData.listName;
-replServer.context.listBy = studentData.listBy;
-replServer.context.listMonth = studentData.listMonth;
-replServer.context.listSorted = studentData.listSorted;
+let student = new Student()
+replServer.context.help = student.help;
+replServer.context.addData = student.addData;
+replServer.context.updateData = student.updateData;
+replServer.context.removeData = student.removeData;
+replServer.context.studentsList = student.studentsList;
+replServer.context.nameList = student.nameList;
+replServer.context.keyValueList = student.keyValueList;
+replServer.context.listByMonth = student.listByMonth;
+replServer.context.sortedByBirthday = student.sortedByBirthday;

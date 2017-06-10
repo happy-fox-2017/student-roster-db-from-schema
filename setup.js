@@ -6,23 +6,23 @@ const sqlite3 = require('sqlite3').verbose();
 const file = 'student.db';
 const db = new sqlite3.Database(file);
 
-const CREATE_TABLE = `
+const CREATE_TABLE_DDL = `
   CREATE TABLE IF NOT EXISTS student
     (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      firstname TEXT NOT NULL,
-      lastname TEXT,
+      first_name TEXT NOT NULL,
+      last_name TEXT,
       birthdate DATE
     )`;
 
-const SEED_DATA = `
-  INSERT INTO student (firstname, lastname, birthdate) VALUES
+const SEED_DATA_SQL = `
+  INSERT INTO student (first_name, last_name, birthdate) VALUES
     ('Rubi', 'Henjaya', '1986-11-20'),
     ('Riza', 'Fahmi', '1983-12-3')
 `;
 
 const createTable = (callback) => {
-  db.run(CREATE_TABLE, (err) => {
+  db.run(CREATE_TABLE_DDL, (err) => {
     if (err) {
       console.log(err);
       if (callback) callback(err);
@@ -34,7 +34,7 @@ const createTable = (callback) => {
 };
 
 const seedData = (callback) => {
-  db.run(SEED_DATA, (err) => {
+  db.run(SEED_DATA_SQL, (err) => {
     if (err) {
       console.log(err);
       if (callback) callback(err);

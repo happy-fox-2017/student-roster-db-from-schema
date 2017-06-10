@@ -9,13 +9,13 @@ const db = new sqlite.Database(FILE_NAME);
 const STUDENT1 = {
   firstName: 'student1FirstName',
   lastName: 'student1LastName',
-  birthdate: '1986-11-20',
+  birthdate: '1986-06-20',
 };
 
 const STUDENT2 = {
   firstName: 'student2FirstName',
   lastName: 'student2LastName',
-  birthdate: '1987-12-21',
+  birthdate: '1987-06-21',
 };
 
 const DELETE_STUDENT_TABLE_SQL = 'DELETE FROM student ';
@@ -129,6 +129,40 @@ describe('Student', function() {
         (students, err) => {
           if (!err) {
             students.should.have.lengthOf(1);
+            done();
+          } else {
+            done(err);
+          }
+        });
+    });
+  });
+
+  describe('#findHavingBirthdayByMonth()', function () {
+
+    before(function (done) {
+      db.run(DELETE_STUDENT_TABLE_SQL,
+        (err) => {
+          Student.createStudent(
+            STUDENT1.firstName,
+            STUDENT1.lastName,
+            STUDENT1.birthdate,
+            (lastId, err1) => {
+              Student.createStudent(
+                STUDENT2.firstName,
+                STUDENT2.lastName,
+                STUDENT2.birthdate,
+                (lastId2, err2) => {
+                  done(err2);
+                });
+            });
+        });
+    });
+
+    it('should get students having birthday by given month', function (done) {
+      Student.findHavingBirthdayByMonth(6,
+        (students, err) => {
+          if (!err) {
+            students.should.have.lengthOf(2);
             done();
           } else {
             done(err);

@@ -18,7 +18,7 @@ const CREATE_TABLE_DDL = `
 const SEED_DATA_SQL = `
   INSERT INTO student (first_name, last_name, birthdate) VALUES
     ('Rubi', 'Henjaya', '1986-11-20'),
-    ('Riza', 'Fahmi', '1983-12-3')
+    ('Riza', 'Fahmi', '1983-12-03')
 `;
 
 const createTable = (callback) => {

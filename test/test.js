@@ -16,13 +16,6 @@ const DELETE_STUDENT_TABLE_SQL = 'DELETE FROM student ';
 
 describe('Student', function() {
 
-  before(function (done) {
-    db.run(DELETE_STUDENT_TABLE_SQL,
-      (err) => {
-        done(err);
-      });
-  })
-
   describe('#create()', function() {
     it('should create student without any error', function (done) {
       Student.createStudent(
@@ -36,7 +29,45 @@ describe('Student', function() {
     });
   });
 
+  describe('#findAll()', function() {
+
+    before(function (done) {
+      db.run(DELETE_STUDENT_TABLE_SQL,
+        (err) => {
+          Student.createStudent(
+            STUDENT.firstName,
+            STUDENT.lastName,
+            STUDENT.birthdate,
+            (lastId, err1) => {
+              Student.createStudent(
+                STUDENT.firstName,
+                STUDENT.lastName,
+                STUDENT.birthdate,
+                (lastId2, err2) => {
+                  done(err2);
+                });
+            });
+        });
+    });
+
+    it('should get all students', function (done) {
+      Student.findAll(
+        (students, err) => {
+          students.should.have.lengthOf(2);
+          done(err);
+        });
+    });
+  });
+
   describe('#update()', function() {
+
+    before(function (done) {
+      db.run(DELETE_STUDENT_TABLE_SQL,
+        (err) => {
+          done(err);
+        });
+    });
+
     it('should change only 1 row', function (done) {
       Student.createStudent(
         STUDENT.firstName,
@@ -49,6 +80,34 @@ describe('Student', function() {
               STUDENT.firstName,
               STUDENT.lastName,
               STUDENT.birthdate,
+              (changes, updateErr) => {
+                changes.should.equal(1);
+                done(updateErr);
+              });
+          } else {
+            done(err);
+          }
+        });
+    });
+  });
+
+  describe('#delete()', function() {
+    before(function (done) {
+      db.run(DELETE_STUDENT_TABLE_SQL,
+        (err) => {
+          done(err);
+        });
+    });
+
+    it('should delete only 1 row', function (done) {
+      Student.createStudent(
+        STUDENT.firstName,
+        STUDENT.lastName,
+        STUDENT.birthdate,
+        (lastId, err) => {
+          if (!err) {
+            Student.deleteStudent(
+              lastId,
               (changes, updateErr) => {
                 changes.should.equal(1);
                 done(updateErr);

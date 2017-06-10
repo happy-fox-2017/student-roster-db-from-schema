@@ -6,8 +6,9 @@ const FILE_NAME = 'student.db';
 const db = new sqlite.Database(FILE_NAME);
 
 const INSERT_STUDENT_SQL = 'INSERT INTO student VALUES (null, ?, ?, ?)';
-const UPDATE_STUDENT_SQL = 'UPDATE student SET first_name = ?, last_name = ?, birthdate = ? WHERE id = ? ';
-const DELETE_STUDENT_SQL = 'DELETE FROM student WHERE id = ? ';
+const ALL_STUDENT_SQL = 'SELECT * FROM student';
+const UPDATE_STUDENT_SQL = 'UPDATE student SET first_name = ?, last_name = ?, birthdate = ? WHERE id = ?';
+const DELETE_STUDENT_SQL = 'DELETE FROM student WHERE id = ?';
 
 class Student {
   constructor(firstName, lastName, birthdate) {
@@ -30,6 +31,17 @@ class Student {
     });
   }
 
+  static findAll(callback) {
+    db.all(ALL_STUDENT_SQL,
+      (err, rows) => {
+        if (!err) {
+          callback(rows, null);
+        } else {
+          callback(null, err);
+        }
+      });
+  }
+
   static updateStudent(id, firstName, lastName, birthdate, callback) {
     db.run(UPDATE_STUDENT_SQL, [
       firstName,
@@ -43,6 +55,17 @@ class Student {
         callback(null, err);
       }
     });
+  }
+
+  static deleteStudent(id, callback) {
+    db.run(DELETE_STUDENT_SQL, [id],
+      function afterDelete(err) {
+        if (!err) {
+          callback(this.changes, null);
+        } else {
+          callback(null, err);
+        }
+      });
   }
 }
 

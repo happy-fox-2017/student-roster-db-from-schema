@@ -35,7 +35,7 @@ describe('Student', function() {
     });
   });
 
-  describe('#findAll()', function() {
+  describe('#findAll()', function () {
 
     before(function (done) {
       db.run(DELETE_STUDENT_TABLE_SQL,
@@ -59,13 +59,17 @@ describe('Student', function() {
     it('should get all students', function (done) {
       Student.findAll(
         (students, err) => {
-          students.should.have.lengthOf(2);
-          done(err);
+          if (!err) {
+            students.should.have.lengthOf(2);
+            done();
+          } else {
+            done(err);
+          }
         });
     });
   });
 
-  describe('#findByName()', function() {
+  describe('#findByName()', function () {
 
     before(function (done) {
       db.run(DELETE_STUDENT_TABLE_SQL,
@@ -89,8 +93,46 @@ describe('Student', function() {
     it('should get students by given name', function (done) {
       Student.findByName(STUDENT1.firstName.substring(0, 4),
         (students, err) => {
-          students.should.have.lengthOf(2);
-          done(err);
+          if (!err) {
+            students.should.have.lengthOf(2);
+            done();
+          } else {
+            done(err);
+          }
+        });
+    });
+  });
+
+  describe('#findByAttribute()', function () {
+
+    before(function (done) {
+      db.run(DELETE_STUDENT_TABLE_SQL,
+        (err) => {
+          Student.createStudent(
+            STUDENT1.firstName,
+            STUDENT1.lastName,
+            STUDENT1.birthdate,
+            (lastId, err1) => {
+              Student.createStudent(
+                STUDENT2.firstName,
+                STUDENT2.lastName,
+                STUDENT2.birthdate,
+                (lastId2, err2) => {
+                  done(err2);
+                });
+            });
+        });
+    });
+
+    it('should get students by given attribute and value', function (done) {
+      Student.findByAttribute('first_name', STUDENT1.firstName,
+        (students, err) => {
+          if (!err) {
+            students.should.have.lengthOf(1);
+            done();
+          } else {
+            done(err);
+          }
         });
     });
   });
@@ -117,8 +159,12 @@ describe('Student', function() {
               STUDENT1.lastName,
               STUDENT1.birthdate,
               (changes, updateErr) => {
-                changes.should.equal(1);
-                done(updateErr);
+                if (!updateErr) {
+                  changes.should.equal(1);
+                  done();
+                } else {
+                  done(updateErr);
+                }
               });
           } else {
             done(err);
@@ -127,7 +173,7 @@ describe('Student', function() {
     });
   });
 
-  describe('#delete()', function() {
+  describe('#delete()', function () {
     before(function (done) {
       db.run(DELETE_STUDENT_TABLE_SQL,
         (err) => {
@@ -144,9 +190,13 @@ describe('Student', function() {
           if (!err) {
             Student.deleteStudent(
               lastId,
-              (changes, updateErr) => {
-                changes.should.equal(1);
-                done(updateErr);
+              (changes, deleteErr) => {
+                if (!deleteErr) {
+                  changes.should.equal(1);
+                  done();
+                } else {
+                  done(deleteErr);
+                }
               });
           } else {
             done(err);

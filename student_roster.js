@@ -8,6 +8,7 @@ const db = new sqlite.Database(FILE_NAME);
 const INSERT_STUDENT_SQL = 'INSERT INTO student VALUES (null, ?, ?, ?)';
 const ALL_STUDENT_SQL = 'SELECT * FROM student';
 const FIND_BY_NAME_SQL = 'SELECT * FROM student WHERE first_name LIKE ? OR last_name LIKE ?';
+const FIND_BY_ATTRIBUTE_SQL = 'SELECT * FROM student';
 const UPDATE_STUDENT_SQL = 'UPDATE student SET first_name = ?, last_name = ?, birthdate = ? WHERE id = ?';
 const DELETE_STUDENT_SQL = 'DELETE FROM student WHERE id = ?';
 
@@ -47,6 +48,19 @@ class Student {
     const nameFilter = name ? `%${name}%` : '%%';
     db.all(FIND_BY_NAME_SQL,
       [nameFilter],
+      (err, rows) => {
+        if (!err) {
+          callback(rows, null);
+        } else {
+          callback(null, err);
+        }
+      });
+  }
+
+  static findByAttribute(attrName, attrValue, callback) {
+    const findByAttributeSql = `${FIND_BY_ATTRIBUTE_SQL} WHERE ${attrName} = ?`;
+    db.all(findByAttributeSql,
+      [attrValue],
       (err, rows) => {
         if (!err) {
           callback(rows, null);

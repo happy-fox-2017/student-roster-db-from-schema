@@ -21,8 +21,27 @@ class Student {
       firstName,
       lastName,
       birthdate,
-    ], (err) => {
-      callback(err);
+    ], function afterCreate(err) {
+      if (!err) {
+        callback(this.lastID, null);
+      } else {
+        callback(null, err);
+      }
+    });
+  }
+
+  static updateStudent(id, firstName, lastName, birthdate, callback) {
+    db.run(UPDATE_STUDENT_SQL, [
+      firstName,
+      lastName,
+      birthdate,
+      id,
+    ], function afterUpdate(err) {
+      if (!err) {
+        callback(this.changes, null);
+      } else {
+        callback(null, err);
+      }
     });
   }
 }

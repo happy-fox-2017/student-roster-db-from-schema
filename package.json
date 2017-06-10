@@ -2,11 +2,12 @@
   "name": "student-roster-db-from-schema",
   "version": "1.0.0",
   "description": "",
-  "main": "student_roster.js",
+  "main": "student_roster_repl.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
+    "start": "node student_roster_repl.js",	
     "test": "mocha"
   },
   "repository": {

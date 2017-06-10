@@ -1,35 +1,33 @@
 'use strict'
 
-const repl = require('repl');
 const sqlite = require('sqlite3').verbose();
 
 const FILE_NAME = 'student.db';
 const db = new sqlite.Database(FILE_NAME);
 
-// write your code here
+const INSERT_STUDENT_SQL = 'INSERT INTO student VALUES (null, ?, ?, ?)';
+const UPDATE_STUDENT_SQL = 'UPDATE student SET first_name = ?, last_name = ?, birthdate = ? WHERE id = ? ';
+const DELETE_STUDENT_SQL = 'DELETE FROM student WHERE id = ? ';
+
 class Student {
-  constructor(firstname, lastname, birthdate) {
-    this.firstname = firstname;
-    this.lastname = lastname;
+  constructor(firstName, lastName, birthdate) {
+    this.firstName = firstName;
+    this.lastName = lastName;
     this.birthdate = birthdate;
+  }
+
+  static createStudent(firstName, lastName, birthdate, callback) {
+    db.run(INSERT_STUDENT_SQL, [
+      firstName,
+      lastName,
+      birthdate,
+    ], (err) => {
+      callback(err);
+    });
   }
 }
 
-const addStudent = (firstname, lastname, birthdate) => {
-  const ADD_STUDENT_SQL = 'INSERT INTO student VALUES (?, ?, ?)';
+module.exports = {
+  Student,
 };
 
-const initializeContext = (context) => {
-  const student = new Student();
-  context.student = student;
-};
-
-
-const initDatabase = () => {
-  db.serialize(() => {
-    const r = repl.start({ prompt: '> ' });
-    initializeContext(r.context);
-  });
-};
-
-initDatabase();

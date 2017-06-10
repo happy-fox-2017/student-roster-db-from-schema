@@ -171,6 +171,41 @@ describe('Student', function() {
     });
   });
 
+  describe('#sortByBirthDate()', function () {
+
+    before(function (done) {
+      db.run(DELETE_STUDENT_TABLE_SQL,
+        (err) => {
+          Student.createStudent(
+            STUDENT1.firstName,
+            STUDENT1.lastName,
+            STUDENT1.birthdate,
+            (lastId, err1) => {
+              Student.createStudent(
+                STUDENT2.firstName,
+                STUDENT2.lastName,
+                STUDENT2.birthdate,
+                (lastId2, err2) => {
+                  done(err2);
+                });
+            });
+        });
+    });
+
+    it('should get all students sort by birthdate', function (done) {
+      Student.sortByBirthDate(
+        (students, err) => {
+          if (!err) {
+            const student1 = students[0];
+            student1.first_name.should.equal(STUDENT1.firstName);
+            done();
+          } else {
+            done(err);
+          }
+        });
+    });
+  });
+
   describe('#update()', function() {
 
     before(function (done) {
